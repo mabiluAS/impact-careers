@@ -8228,14 +8228,12 @@ function my_acf_init_block_types() {
 
     // Check function exists.
     if( function_exists('acf_register_block_type') ) {
-
-        // register a testimonial block.
+        // register an office block.
         acf_register_block_type(array(
-            'name'              => 'listing',
-            'title'             => __('Listing'),
-            'description'       => __('A custom job listing block.'),
-            'render_template'   => 'blocks/listing/listing.php',
-            'category'          => 'formatting',
+            'name'              => 'office',
+            'title'             => __('Office'),
+            'description'       => __('A custom Office block.'),
+            'render_template'   => 'template-parts/blocks/office/office.php',
             'icon'              => 'admin-comments',
             'keywords'          => array( 'office', 'listing' ),
         ));
