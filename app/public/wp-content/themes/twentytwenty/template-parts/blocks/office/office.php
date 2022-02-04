@@ -18,18 +18,30 @@ if( !empty($block['align']) ) {
     $className .= ' align' . $block['align'];
 }
 
+$count_array = get_job_count();
+$count = 0;
 ?>
 
 <div class="<?php echo esc_attr($className); ?>">
-    <?php if (have_rows('office')) : ?>
-        <?php while (have_rows('office')) : ?>
-        <blockquote class="office-blockquote">
-            <span class="office-text"><?php get_sub_field('name'); ?></span>
-            <span class="office-name"><?php get_sub_field('title'); ?></span>
-        </blockquote>
-        <div class="office-image">
-            <?php echo wp_get_attachment_image(get_sub_field('image'), 'full' ); ?>
+    <?php  if (have_rows('offices')) : ?>
+        
+        <?php while (have_rows('offices')) : the_row() ?>
+        
+        <div>
+            <a href="/job-overview"><h5 class="office-text"><?php the_sub_field('name'); ?> </h5></a>
         </div>
-        <?php endwhile; ?>
+                
+        <div class="office-image">
+            <img src="<?php echo get_sub_field('image')['url']; ?>" alt="">
+        </div>
+        <blockquote class="office-blockquote">
+        <span class="office-position">Positions Available: <?php echo $count_array[$count][get_sub_field('name')]; ?> </span>
+        </blockquote>
+        <?php $count++; ?>
+        <?php  endwhile;        
+        ?>
     <?php endif; ?>
 </div>
+
+<?php 
+

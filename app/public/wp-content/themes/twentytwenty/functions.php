@@ -786,3 +786,69 @@ function twentytwenty_get_elements_array() {
 	 */
 	return apply_filters( 'twentytwenty_get_elements_array', $elements );
 }
+
+
+add_action('acf/init', 'my_acf_init_block_types');
+function my_acf_init_block_types() {
+
+    if( function_exists('acf_register_block_type') ) {
+
+        acf_register_block_type(array(
+            'name'              => 'office',
+            'title'             => __('Office'),
+            'description'       => __('A custom Office block.'),
+            'render_template'   => 'template-parts/blocks/office/office.php',
+            'category'          => 'formatting',
+            'icon'              => 'admin-comments',
+            'keywords'          => array( 'office', 'jobs', 'listings' ),
+        ));
+    }
+}
+
+const OFFICES = array ("Cape Town", "London", "New York"); 
+
+function get_offices_from_api(){
+
+	$results = wp_remote_retrieve_body(wp_remote_get('https://boards-api.greenhouse.io/v1/boards/impact/offices'));
+	$results = json_decode($results);
+	
+	$offices= array_filter($results->offices ?? array(), function($office){
+		return in_array($office->name, OFFICES);	
+	});	
+
+	return $offices;
+}
+
+function get_job_count(){	
+	$total_count = [];
+	foreach(get_offices_from_api() as $office){	
+		$sub_count = 0;
+		foreach($office->departments as $department){
+			if($department->jobs){				
+				$sub_count += count($department->jobs);
+			}
+		}
+		$array_count = array($office->name => $sub_count);
+		array_push($total_count, $array_count);		
+	}
+
+	return $total_count;
+}
+
+function display_jobs_overview($city, $parent_id){
+
+	$content = '';
+
+	return wp_insert_post(
+        array(
+        'comment_status' => 'close',
+        'ping_status'    => 'close',
+        'post_author'    => 1,
+        'post_title'     => __($city. ' Overview'),
+        'post_name'      => __($city. ' Overview'),
+        'post_status'    => 'publish',
+        'post_content'   => 'Content of the page',
+        'post_type'      => 'page',
+        )
+    );
+}
